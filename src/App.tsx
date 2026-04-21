@@ -12,6 +12,9 @@ import Products from "./pages/Products";
 import POS from "./pages/POS";
 import Reports from "./pages/Reports";
 import Users from "./pages/Users";
+import Categories from "./pages/Categories";
+import Orders from "./pages/Orders";
+import Settings from "./pages/Settings";
 import NotFound from "./pages/NotFound.tsx";
 
 const queryClient = new QueryClient();
