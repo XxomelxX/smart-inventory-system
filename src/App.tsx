@@ -38,11 +38,21 @@ const App = () => (
             >
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/pos" element={<POS />} />
+              <Route path="/orders" element={<Orders />} />
+              <Route path="/settings" element={<Settings />} />
               <Route
                 path="/products"
                 element={
                   <ProtectedRoute roles={["ADMIN"]}>
                     <Products />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/categories"
+                element={
+                  <ProtectedRoute roles={["ADMIN"]}>
+                    <Categories />
                   </ProtectedRoute>
                 }
               />
