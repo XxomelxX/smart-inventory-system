@@ -10,9 +10,12 @@ import { mockProducts } from "@/lib/mockData";
 import { AlertTriangle, Package, ArrowUpRight, Search, Download } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
+import { useAuth } from "@/context/AuthContext";
 
 const LowStock = () => {
   const [search, setSearch] = useState("");
+  const { user } = useAuth();
+  const isAdmin = user?.role === "ADMIN";
   const threshold = 20;
 
   const lowStockItems = useMemo(() => {
@@ -58,12 +61,18 @@ const LowStock = () => {
               {lowStockItems.length}
             </Badge>
           </div>
-          <p className="text-muted-foreground">Products below {threshold} units that need restocking.</p>
+          <p className="text-muted-foreground">
+            {isAdmin
+              ? `Products below ${threshold} units that need restocking.`
+              : `Review products with low stock (below ${threshold} units).`}
+          </p>
         </div>
-        <Button variant="outline" onClick={exportList}>
-          <Download className="h-4 w-4 mr-2" />
-          Export List
-        </Button>
+        {isAdmin && (
+          <Button variant="outline" onClick={exportList}>
+            <Download className="h-4 w-4 mr-2" />
+            Export List
+          </Button>
+        )}
       </header>
 
       {/* Summary Cards */}
