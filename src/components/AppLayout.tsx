@@ -1,5 +1,5 @@
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
-import { LayoutDashboard, Package, ScanBarcode, BarChart3, LogOut, Boxes, Users as UsersIcon, LayoutGrid, ReceiptText, Settings as SettingsIcon } from "lucide-react";
+import { LayoutDashboard, Package, ScanBarcode, BarChart3, LogOut, Boxes, Users as UsersIcon, LayoutGrid, ReceiptText, Settings as SettingsIcon, AlertTriangle } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
