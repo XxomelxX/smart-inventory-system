@@ -1,5 +1,5 @@
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
-import { LayoutDashboard, Package, ScanBarcode, BarChart3, LogOut, Boxes, Users as UsersIcon, LayoutGrid, ReceiptText, Settings as SettingsIcon } from "lucide-react";
+import { LayoutDashboard, Package, ScanBarcode, BarChart3, LogOut, Boxes, Users as UsersIcon, LayoutGrid, ReceiptText, Settings as SettingsIcon, AlertTriangle } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -9,6 +9,7 @@ const navItems = [
   { to: "/pos", label: "POS", icon: ScanBarcode, roles: ["ADMIN", "CASHIER"] },
   { to: "/products", label: "Products", icon: Package, roles: ["ADMIN"] },
   { to: "/categories", label: "Categories", icon: LayoutGrid, roles: ["ADMIN"] },
+  { to: "/low-stock", label: "Low Stock", icon: AlertTriangle, roles: ["ADMIN"] },
   { to: "/orders", label: "Orders", icon: ReceiptText, roles: ["ADMIN", "CASHIER"] },
   { to: "/reports", label: "Reports", icon: BarChart3, roles: ["ADMIN"] },
   { to: "/users", label: "Users", icon: UsersIcon, roles: ["ADMIN"] },
