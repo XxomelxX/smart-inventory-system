@@ -16,6 +16,7 @@ import Users from "./pages/Users";
 import Categories from "./pages/Categories";
 import Orders from "./pages/Orders";
 import Settings from "./pages/Settings";
+import LowStock from "./pages/LowStock";
 import NotFound from "./pages/NotFound.tsx";
 
 const queryClient = new QueryClient();
