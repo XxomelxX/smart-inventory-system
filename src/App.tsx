@@ -12,6 +12,9 @@ import Products from "./pages/Products";
 import POS from "./pages/POS";
 import Reports from "./pages/Reports";
 import Users from "./pages/Users";
+import Categories from "./pages/Categories";
+import Orders from "./pages/Orders";
+import Settings from "./pages/Settings";
 import NotFound from "./pages/NotFound.tsx";
 
 const queryClient = new QueryClient();
@@ -35,11 +38,21 @@ const App = () => (
             >
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/pos" element={<POS />} />
+              <Route path="/orders" element={<Orders />} />
+              <Route path="/settings" element={<Settings />} />
               <Route
                 path="/products"
                 element={
                   <ProtectedRoute roles={["ADMIN"]}>
                     <Products />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/categories"
+                element={
+                  <ProtectedRoute roles={["ADMIN"]}>
+                    <Categories />
                   </ProtectedRoute>
                 }
               />
