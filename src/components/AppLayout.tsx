@@ -9,6 +9,7 @@ const navItems = [
   { to: "/pos", label: "POS", icon: ScanBarcode, roles: ["ADMIN", "CASHIER"] },
   { to: "/products", label: "Products", icon: Package, roles: ["ADMIN"] },
   { to: "/categories", label: "Categories", icon: LayoutGrid, roles: ["ADMIN"] },
+  { to: "/low-stock", label: "Low Stock", icon: AlertTriangle, roles: ["ADMIN"] },
   { to: "/orders", label: "Orders", icon: ReceiptText, roles: ["ADMIN", "CASHIER"] },
   { to: "/reports", label: "Reports", icon: BarChart3, roles: ["ADMIN"] },
   { to: "/users", label: "Users", icon: UsersIcon, roles: ["ADMIN"] },
