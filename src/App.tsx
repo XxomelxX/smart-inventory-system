@@ -60,6 +60,14 @@ const App = () => (
                 }
               />
               <Route
+                path="/low-stock"
+                element={
+                  <ProtectedRoute roles={["ADMIN"]}>
+                    <LowStock />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
                 path="/reports"
                 element={
                   <ProtectedRoute roles={["ADMIN"]}>
