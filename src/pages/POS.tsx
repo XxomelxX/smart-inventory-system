@@ -7,9 +7,12 @@ import { mockProducts, Product, TransactionItem } from "@/lib/mockData";
 import { ScanBarcode, Trash2, Plus, Minus, Receipt } from "lucide-react";
 import { toast } from "sonner";
 import { useAuth } from "@/context/AuthContext";
+import { useOrders } from "@/context/OrdersContext";
+import { Link } from "react-router-dom";
 
 const POS = () => {
   const { user } = useAuth();
+  const { addOrder } = useOrders();
   const [barcode, setBarcode] = useState("");
   const [cart, setCart] = useState<TransactionItem[]>([]);
   const [lastReceipt, setLastReceipt] = useState<{ id: number; total: number; items: TransactionItem[] } | null>(null);
@@ -68,10 +71,10 @@ const POS = () => {
 
   const checkout = () => {
     if (cart.length === 0) return;
-    const id = 1000 + Math.floor(Math.random() * 9000);
-    setLastReceipt({ id, total, items: cart });
+    const order = addOrder(cart, total, user?.name || "Unknown");
+    setLastReceipt({ id: order.id, total: order.total, items: order.items });
     setCart([]);
-    toast.success(`Sale #${id} completed — ₱${total.toFixed(2)}`);
+    toast.success(`Sale #${order.id} completed — ₱${order.total.toFixed(2)}`);
   };
 
   return (
@@ -178,11 +181,17 @@ const POS = () => {
           </div>
 
           {lastReceipt && (
-            <div className="mt-4 p-3 rounded-lg bg-secondary text-xs">
-              <div className="font-semibold mb-1">✓ Receipt #{lastReceipt.id}</div>
+            <div className="mt-4 p-3 rounded-lg bg-secondary text-xs space-y-2">
+              <div className="font-semibold">✓ Receipt #{lastReceipt.id}</div>
               <div className="text-muted-foreground">
                 {lastReceipt.items.length} item(s) · ₱{lastReceipt.total.toFixed(2)}
               </div>
+              <Link
+                to="/orders"
+                className="inline-block text-primary font-medium hover:underline"
+              >
+                View in Orders →
+              </Link>
             </div>
           )}
         </Card>

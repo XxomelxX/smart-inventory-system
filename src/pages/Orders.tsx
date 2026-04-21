@@ -9,16 +9,17 @@ import {
 import {
   Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
 } from "@/components/ui/table";
-import { mockTransactions } from "@/lib/mockData";
+import { useOrders } from "@/context/OrdersContext";
 import { Search, Eye, Receipt } from "lucide-react";
 
 const Orders = () => {
   const [search, setSearch] = useState("");
   const [selectedId, setSelectedId] = useState<number | null>(null);
+  const { orders: rawOrders } = useOrders();
 
   const orders = useMemo(
-    () => [...mockTransactions].sort((a, b) => +new Date(b.date) - +new Date(a.date)),
-    []
+    () => [...rawOrders].sort((a, b) => +new Date(b.date) - +new Date(a.date)),
+    [rawOrders]
   );
 
   const filtered = orders.filter((o) => {
