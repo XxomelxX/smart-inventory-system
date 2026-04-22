@@ -110,5 +110,50 @@ All colors MUST be HSL.
 
   body {
     @apply bg-background text-foreground;
+    background-color: hsl(var(--background));
+    background-image:
+      radial-gradient(at 12% 8%, hsl(217 91% 60% / 0.18) 0px, transparent 55%),
+      radial-gradient(at 88% 12%, hsl(158 64% 55% / 0.16) 0px, transparent 50%),
+      radial-gradient(at 78% 92%, hsl(217 91% 35% / 0.18) 0px, transparent 55%),
+      radial-gradient(at 8% 90%, hsl(38 92% 60% / 0.10) 0px, transparent 50%);
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+    background-size: cover;
+    min-height: 100vh;
+    position: relative;
+  }
+
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    background-image:
+      linear-gradient(hsl(217 91% 35% / 0.05) 1px, transparent 1px),
+      linear-gradient(90deg, hsl(217 91% 35% / 0.05) 1px, transparent 1px);
+    background-size: 44px 44px;
+    mask-image: radial-gradient(ellipse at center, black 40%, transparent 85%);
+    -webkit-mask-image: radial-gradient(ellipse at center, black 40%, transparent 85%);
+  }
+
+  #root, main, aside {
+    position: relative;
+    z-index: 1;
+  }
+
+  /* Frosted glass cards over the gradient mesh */
+  .bg-card,
+  [class*="bg-card"] {
+    backdrop-filter: saturate(140%) blur(2px);
+  }
+}
+
+@layer utilities {
+  .bg-app-mesh {
+    background-image:
+      radial-gradient(at 12% 8%, hsl(217 91% 60% / 0.22) 0px, transparent 55%),
+      radial-gradient(at 88% 12%, hsl(158 64% 55% / 0.20) 0px, transparent 50%),
+      radial-gradient(at 78% 92%, hsl(217 91% 35% / 0.22) 0px, transparent 55%);
   }
 }
