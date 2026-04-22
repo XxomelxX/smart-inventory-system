@@ -5,6 +5,8 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { AuthProvider } from "@/context/AuthContext";
 import { OrdersProvider } from "@/context/OrdersContext";
+import { ProductsProvider } from "@/context/ProductsContext";
+import { AuditProvider } from "@/context/AuditContext";
 import { AppLayout } from "@/components/AppLayout";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
 import Login from "./pages/Login";
@@ -17,6 +19,8 @@ import Categories from "./pages/Categories";
 import Orders from "./pages/Orders";
 import Settings from "./pages/Settings";
 import LowStock from "./pages/LowStock";
+import ZReading from "./pages/ZReading";
+import AuditLog from "./pages/AuditLog";
 import NotFound from "./pages/NotFound.tsx";
 
 const queryClient = new QueryClient();
@@ -28,58 +32,51 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <AuthProvider>
-          <OrdersProvider>
-          <Routes>
-            <Route path="/" element={<Navigate to="/dashboard" replace />} />
-            <Route path="/login" element={<Login />} />
-            <Route
-              element={
-                <ProtectedRoute>
-                  <AppLayout />
-                </ProtectedRoute>
-              }
-            >
-              <Route path="/dashboard" element={<Dashboard />} />
-              <Route path="/pos" element={<POS />} />
-              <Route path="/orders" element={<Orders />} />
-              <Route path="/settings" element={<Settings />} />
-              <Route
-                path="/products"
-                element={
-                  <ProtectedRoute roles={["ADMIN"]}>
-                    <Products />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/categories"
-                element={
-                  <ProtectedRoute roles={["ADMIN"]}>
-                    <Categories />
-                  </ProtectedRoute>
-                }
-              />
-              <Route path="/low-stock" element={<LowStock />} />
-              <Route
-                path="/reports"
-                element={
-                  <ProtectedRoute roles={["ADMIN"]}>
-                    <Reports />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/users"
-                element={
-                  <ProtectedRoute roles={["ADMIN"]}>
-                    <Users />
-                  </ProtectedRoute>
-                }
-              />
-            </Route>
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-          </OrdersProvider>
+          <AuditProvider>
+            <ProductsProvider>
+              <OrdersProvider>
+                <Routes>
+                  <Route path="/" element={<Navigate to="/dashboard" replace />} />
+                  <Route path="/login" element={<Login />} />
+                  <Route
+                    element={
+                      <ProtectedRoute>
+                        <AppLayout />
+                      </ProtectedRoute>
+                    }
+                  >
+                    <Route path="/dashboard" element={<Dashboard />} />
+                    <Route path="/pos" element={<POS />} />
+                    <Route path="/orders" element={<Orders />} />
+                    <Route path="/z-reading" element={<ZReading />} />
+                    <Route path="/settings" element={<Settings />} />
+                    <Route
+                      path="/products"
+                      element={<ProtectedRoute roles={["ADMIN"]}><Products /></ProtectedRoute>}
+                    />
+                    <Route
+                      path="/categories"
+                      element={<ProtectedRoute roles={["ADMIN"]}><Categories /></ProtectedRoute>}
+                    />
+                    <Route path="/low-stock" element={<LowStock />} />
+                    <Route
+                      path="/reports"
+                      element={<ProtectedRoute roles={["ADMIN"]}><Reports /></ProtectedRoute>}
+                    />
+                    <Route
+                      path="/audit"
+                      element={<ProtectedRoute roles={["ADMIN"]}><AuditLog /></ProtectedRoute>}
+                    />
+                    <Route
+                      path="/users"
+                      element={<ProtectedRoute roles={["ADMIN"]}><Users /></ProtectedRoute>}
+                    />
+                  </Route>
+                  <Route path="*" element={<NotFound />} />
+                </Routes>
+              </OrdersProvider>
+            </ProductsProvider>
+          </AuditProvider>
         </AuthProvider>
       </BrowserRouter>
     </TooltipProvider>

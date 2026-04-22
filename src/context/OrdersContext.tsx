@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useState, ReactNode } from "react";
-import { mockTransactions, Transaction, TransactionItem, PaymentMethod } from "@/lib/mockData";
+import { mockTransactions, Transaction, TransactionItem, PaymentMethod, DiscountType } from "@/lib/mockData";
 
 type AddOrderInput = {
   items: TransactionItem[];
@@ -10,11 +10,15 @@ type AddOrderInput = {
   change?: number;
   subtotal?: number;
   vat?: number;
+  discountType?: DiscountType;
+  discountAmount?: number;
+  customer?: string;
 };
 
 type OrdersContextType = {
   orders: Transaction[];
   addOrder: (input: AddOrderInput) => Transaction;
+  voidOrder: (id: number, reason: string) => Transaction | null;
 };
 
 const OrdersContext = createContext<OrdersContextType | null>(null);
@@ -25,9 +29,7 @@ export const OrdersProvider = ({ children }: { children: ReactNode }) => {
     try {
       const stored = localStorage.getItem(STORAGE_KEY);
       if (stored) return JSON.parse(stored);
-    } catch {
-      /* ignore */
-    }
+    } catch { /* ignore */ }
     return mockTransactions;
   });
 
@@ -46,8 +48,22 @@ export const OrdersProvider = ({ children }: { children: ReactNode }) => {
     return order;
   };
 
+  const voidOrder = (id: number, reason: string) => {
+    let voided: Transaction | null = null;
+    setOrders((prev) =>
+      prev.map((o) => {
+        if (o.id === id && !o.voided) {
+          voided = { ...o, voided: true, voidReason: reason, voidedAt: new Date().toISOString() };
+          return voided;
+        }
+        return o;
+      })
+    );
+    return voided;
+  };
+
   return (
-    <OrdersContext.Provider value={{ orders, addOrder }}>
+    <OrdersContext.Provider value={{ orders, addOrder, voidOrder }}>
       {children}
     </OrdersContext.Provider>
   );

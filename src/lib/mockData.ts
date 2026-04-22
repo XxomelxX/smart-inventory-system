@@ -25,6 +25,7 @@ export type TransactionItem = {
 };
 
 export type PaymentMethod = "Cash" | "GCash" | "Card";
+export type DiscountType = "None" | "Senior" | "PWD" | "Custom";
 
 export type Transaction = {
   id: number;
@@ -37,6 +38,12 @@ export type Transaction = {
   change?: number;
   subtotal?: number;
   vat?: number;
+  discountType?: DiscountType;
+  discountAmount?: number;
+  customer?: string;
+  voided?: boolean;
+  voidReason?: string;
+  voidedAt?: string;
 };
 
 export const mockUsers: User[] = [

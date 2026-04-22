@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -6,7 +6,8 @@ import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { Separator } from "@/components/ui/separator";
 import { useAuth } from "@/context/AuthContext";
-import { Save, Store, Bell, Shield } from "lucide-react";
+import { useAudit } from "@/context/AuditContext";
+import { Save, Store, Bell, Shield, Database, Download, Upload } from "lucide-react";
 import { toast } from "sonner";
 
 type StoreSettings = {
@@ -20,20 +21,23 @@ type StoreSettings = {
 };
 
 const DEFAULTS: StoreSettings = {
-  storeName: "Small Inventory System",
-  address: "123 Main Street, Manila, PH",
+  storeName: "Sari-Sari Mart",
+  address: "123 Rizal St., Manila, PH",
   currency: "PHP (₱)",
   taxRate: "12",
-  lowStockThreshold: "10",
+  lowStockThreshold: "20",
   notifyLowStock: true,
   notifySales: false,
 };
 
 const KEY = "inv_settings";
+const BACKUP_KEYS = ["inv_products", "inv_orders", "inv_audit", "inv_settings"];
 
 const Settings = () => {
   const { user } = useAuth();
+  const { record } = useAudit();
   const [s, setS] = useState<StoreSettings>(DEFAULTS);
+  const fileRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     const stored = localStorage.getItem(KEY);
@@ -49,6 +53,39 @@ const Settings = () => {
     setS(DEFAULTS);
     localStorage.removeItem(KEY);
     toast.success("Settings reset to defaults");
+  };
+
+  const backup = () => {
+    const data: Record<string, unknown> = { exportedAt: new Date().toISOString(), version: 1 };
+    BACKUP_KEYS.forEach((k) => {
+      const v = localStorage.getItem(k);
+      if (v) data[k] = JSON.parse(v);
+    });
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url; a.download = `inventory-backup-${new Date().toISOString().slice(0, 10)}.json`;
+    a.click(); URL.revokeObjectURL(url);
+    record({ user: user?.name || "", role: user?.role || "", action: "BACKUP", details: "Full backup downloaded" });
+    toast.success("Backup downloaded");
+  };
+
+  const restore = (file: File) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      try {
+        const data = JSON.parse(String(reader.result));
+        BACKUP_KEYS.forEach((k) => {
+          if (data[k] !== undefined) localStorage.setItem(k, JSON.stringify(data[k]));
+        });
+        record({ user: user?.name || "", role: user?.role || "", action: "RESTORE", details: file.name });
+        toast.success("Backup restored — reloading…");
+        setTimeout(() => window.location.reload(), 800);
+      } catch {
+        toast.error("Invalid backup file");
+      }
+    };
+    reader.readAsText(file);
   };
 
   return (
@@ -112,6 +149,27 @@ const Settings = () => {
 
       <Card className="p-6 space-y-4">
         <div className="flex items-center gap-2">
+          <Database className="h-5 w-5 text-primary" />
+          <h2 className="font-semibold">Backup & Restore</h2>
+        </div>
+        <Separator />
+        <p className="text-sm text-muted-foreground">
+          Download a JSON backup of all products, orders, audit log, and settings. Restore from a backup file to recover data.
+        </p>
+        <div className="flex flex-wrap gap-2">
+          <Button variant="outline" onClick={backup}>
+            <Download className="h-4 w-4" /> Download Backup
+          </Button>
+          <Button variant="outline" onClick={() => fileRef.current?.click()}>
+            <Upload className="h-4 w-4" /> Restore from File
+          </Button>
+          <input ref={fileRef} type="file" accept="application/json" className="hidden"
+            onChange={(e) => { const f = e.target.files?.[0]; if (f) restore(f); e.target.value = ""; }} />
+        </div>
+      </Card>
+
+      <Card className="p-6 space-y-4">
+        <div className="flex items-center gap-2">
           <Shield className="h-5 w-5 text-primary" />
           <h2 className="font-semibold">Account</h2>
         </div>
@@ -130,9 +188,7 @@ const Settings = () => {
 
       <div className="flex gap-3 justify-end">
         <Button variant="outline" onClick={reset}>Reset</Button>
-        <Button onClick={save}>
-          <Save className="h-4 w-4 mr-2" /> Save changes
-        </Button>
+        <Button onClick={save}><Save className="h-4 w-4 mr-2" /> Save changes</Button>
       </div>
     </div>
   );
