@@ -10,16 +10,25 @@ import {
 import {
   Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
 } from "@/components/ui/table";
-import { mockProducts, Product } from "@/lib/mockData";
-import { Plus, Search, Pencil, Trash2 } from "lucide-react";
+import { Product } from "@/lib/mockData";
+import { Plus, Search, Pencil, Trash2, PackagePlus } from "lucide-react";
 import { toast } from "sonner";
+import { useProducts } from "@/context/ProductsContext";
+import { useAudit } from "@/context/AuditContext";
+import { useAuth } from "@/context/AuthContext";
 
 const Products = () => {
-  const [products, setProducts] = useState<Product[]>(mockProducts);
+  const { products, addProduct, updateProduct, removeProduct, restock } = useProducts();
+  const { record } = useAudit();
+  const { user } = useAuth();
   const [search, setSearch] = useState("");
   const [open, setOpen] = useState(false);
   const [editing, setEditing] = useState<Product | null>(null);
   const [form, setForm] = useState({ name: "", barcode: "", price: "", stock: "", category: "" });
+
+  const [restockOpen, setRestockOpen] = useState(false);
+  const [restockTarget, setRestockTarget] = useState<Product | null>(null);
+  const [restockQty, setRestockQty] = useState("");
 
   const filtered = products.filter(
     (p) =>
@@ -42,34 +51,49 @@ const Products = () => {
 
   const save = () => {
     if (!form.name || !form.barcode || !form.price) {
-      toast.error("Please fill in name, barcode, and price.");
-      return;
+      return toast.error("Please fill in name, barcode, and price.");
     }
     if (editing) {
-      setProducts(products.map((p) =>
-        p.id === editing.id
-          ? { ...p, name: form.name, barcode: form.barcode, price: +form.price, stock: +form.stock, category: form.category }
-          : p
-      ));
+      updateProduct(editing.id, {
+        name: form.name, barcode: form.barcode,
+        price: +form.price, stock: +form.stock, category: form.category,
+      });
+      record({ user: user?.name || "", role: user?.role || "", action: "PRODUCT_UPDATE", details: form.name });
       toast.success("Product updated");
     } else {
-      const newP: Product = {
-        id: Math.max(...products.map((p) => p.id)) + 1,
-        name: form.name,
-        barcode: form.barcode,
-        price: +form.price,
-        stock: +form.stock || 0,
+      const newP = addProduct({
+        name: form.name, barcode: form.barcode,
+        price: +form.price, stock: +form.stock || 0,
         category: form.category || "Uncategorized",
-      };
-      setProducts([newP, ...products]);
+      });
+      record({ user: user?.name || "", role: user?.role || "", action: "PRODUCT_CREATE", details: newP.name });
       toast.success("Product added");
     }
     setOpen(false);
   };
 
-  const remove = (id: number) => {
-    setProducts(products.filter((p) => p.id !== id));
+  const remove = (p: Product) => {
+    removeProduct(p.id);
+    record({ user: user?.name || "", role: user?.role || "", action: "PRODUCT_DELETE", details: p.name });
     toast.success("Product deleted");
+  };
+
+  const openRestock = (p: Product) => {
+    setRestockTarget(p);
+    setRestockQty("");
+    setRestockOpen(true);
+  };
+
+  const confirmRestock = () => {
+    const qty = parseInt(restockQty);
+    if (!restockTarget || !qty || qty <= 0) return toast.error("Enter a valid quantity");
+    restock(restockTarget.id, qty);
+    record({
+      user: user?.name || "", role: user?.role || "",
+      action: "RESTOCK", details: `+${qty} ${restockTarget.name}`,
+    });
+    toast.success(`Restocked ${qty} × ${restockTarget.name}`);
+    setRestockOpen(false);
   };
 
   return (
@@ -81,9 +105,7 @@ const Products = () => {
         </div>
         <Dialog open={open} onOpenChange={setOpen}>
           <DialogTrigger asChild>
-            <Button onClick={openNew}>
-              <Plus className="h-4 w-4 mr-2" /> Add Product
-            </Button>
+            <Button onClick={openNew}><Plus className="h-4 w-4 mr-2" /> Add Product</Button>
           </DialogTrigger>
           <DialogContent>
             <DialogHeader>
@@ -126,12 +148,8 @@ const Products = () => {
       <Card className="p-4">
         <div className="relative mb-4">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <Input
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            placeholder="Search by name, barcode, or category…"
-            className="pl-9"
-          />
+          <Input value={search} onChange={(e) => setSearch(e.target.value)}
+            placeholder="Search by name, barcode, or category…" className="pl-9" />
         </div>
 
         <div className="overflow-x-auto">
@@ -151,9 +169,7 @@ const Products = () => {
                 <TableRow key={p.id}>
                   <TableCell className="font-medium">{p.name}</TableCell>
                   <TableCell className="font-mono text-xs">{p.barcode}</TableCell>
-                  <TableCell>
-                    <Badge variant="secondary">{p.category}</Badge>
-                  </TableCell>
+                  <TableCell><Badge variant="secondary">{p.category}</Badge></TableCell>
                   <TableCell className="text-right">₱{p.price.toFixed(2)}</TableCell>
                   <TableCell className="text-right">
                     <Badge variant={p.stock < 10 ? "destructive" : p.stock < 20 ? "secondary" : "outline"}>
@@ -161,10 +177,13 @@ const Products = () => {
                     </Badge>
                   </TableCell>
                   <TableCell className="text-right">
+                    <Button variant="ghost" size="icon" onClick={() => openRestock(p)} title="Restock">
+                      <PackagePlus className="h-4 w-4 text-accent" />
+                    </Button>
                     <Button variant="ghost" size="icon" onClick={() => openEdit(p)}>
                       <Pencil className="h-4 w-4" />
                     </Button>
-                    <Button variant="ghost" size="icon" onClick={() => remove(p.id)}>
+                    <Button variant="ghost" size="icon" onClick={() => remove(p)}>
                       <Trash2 className="h-4 w-4 text-destructive" />
                     </Button>
                   </TableCell>
@@ -181,6 +200,36 @@ const Products = () => {
           </Table>
         </div>
       </Card>
+
+      <Dialog open={restockOpen} onOpenChange={setRestockOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <PackagePlus className="h-5 w-5 text-accent" /> Restock Product
+            </DialogTitle>
+          </DialogHeader>
+          {restockTarget && (
+            <div className="space-y-3 pt-2">
+              <div className="text-sm">
+                <div className="font-semibold">{restockTarget.name}</div>
+                <div className="text-muted-foreground">Current stock: <b>{restockTarget.stock}</b></div>
+              </div>
+              <div className="space-y-2">
+                <Label>Quantity to add</Label>
+                <Input type="number" autoFocus value={restockQty}
+                  onChange={(e) => setRestockQty(e.target.value)} placeholder="e.g. 50" />
+              </div>
+              {restockQty && +restockQty > 0 && (
+                <p className="text-sm text-accent">New stock: {restockTarget.stock + +restockQty}</p>
+              )}
+            </div>
+          )}
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setRestockOpen(false)}>Cancel</Button>
+            <Button onClick={confirmRestock}>Add to Stock</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
