@@ -122,7 +122,7 @@ const Orders = () => {
         <DialogContent>
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
-              <Receipt className="h-5 w-5" />
+              <ReceiptIcon className="h-5 w-5" />
               Order #{selected?.id}
             </DialogTitle>
           </DialogHeader>
