@@ -8,44 +8,44 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    --background: 210 40% 98%;
-    --foreground: 222 47% 11%;
+    --background: 222 47% 8%;
+    --foreground: 210 40% 96%;
 
-    --card: 0 0% 100%;
-    --card-foreground: 222 47% 11%;
+    --card: 222 40% 13%;
+    --card-foreground: 210 40% 96%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 222 47% 11%;
+    --popover: 222 40% 13%;
+    --popover-foreground: 210 40% 96%;
 
-    --primary: 217 91% 35%;
-    --primary-foreground: 210 40% 98%;
-    --primary-glow: 217 91% 60%;
+    --primary: 217 91% 60%;
+    --primary-foreground: 222 47% 8%;
+    --primary-glow: 217 91% 70%;
 
-    --secondary: 210 40% 94%;
-    --secondary-foreground: 222 47% 11%;
+    --secondary: 222 30% 18%;
+    --secondary-foreground: 210 40% 96%;
 
-    --muted: 210 40% 94%;
-    --muted-foreground: 215 16% 47%;
+    --muted: 222 30% 18%;
+    --muted-foreground: 215 20% 70%;
 
-    --accent: 158 64% 42%;
-    --accent-foreground: 0 0% 100%;
+    --accent: 158 64% 52%;
+    --accent-foreground: 222 47% 8%;
 
-    --success: 142 71% 45%;
-    --warning: 38 92% 50%;
+    --success: 142 71% 50%;
+    --warning: 38 92% 55%;
 
     --destructive: 0 84% 60%;
     --destructive-foreground: 210 40% 98%;
 
-    --border: 214 32% 88%;
-    --input: 214 32% 88%;
-    --ring: 217 91% 35%;
+    --border: 222 30% 22%;
+    --input: 222 30% 20%;
+    --ring: 217 91% 60%;
 
     --radius: 0.625rem;
 
-    --gradient-primary: linear-gradient(135deg, hsl(217 91% 35%), hsl(217 91% 55%));
+    --gradient-primary: linear-gradient(135deg, hsl(217 91% 50%), hsl(217 91% 65%));
     --gradient-accent: linear-gradient(135deg, hsl(158 64% 42%), hsl(158 64% 55%));
-    --shadow-elegant: 0 10px 30px -12px hsl(217 91% 35% / 0.25);
-    --shadow-card: 0 1px 3px 0 hsl(222 47% 11% / 0.08), 0 1px 2px 0 hsl(222 47% 11% / 0.04);
+    --shadow-elegant: 0 10px 30px -12px hsl(217 91% 50% / 0.45);
+    --shadow-card: 0 1px 3px 0 hsl(0 0% 0% / 0.35), 0 1px 2px 0 hsl(0 0% 0% / 0.25);
 
     --sidebar-background: 0 0% 98%;
 
@@ -112,10 +112,11 @@ All colors MUST be HSL.
     @apply bg-background text-foreground;
     background-color: hsl(var(--background));
     background-image:
-      radial-gradient(at 12% 8%, hsl(217 91% 60% / 0.18) 0px, transparent 55%),
-      radial-gradient(at 88% 12%, hsl(158 64% 55% / 0.16) 0px, transparent 50%),
-      radial-gradient(at 78% 92%, hsl(217 91% 35% / 0.18) 0px, transparent 55%),
-      radial-gradient(at 8% 90%, hsl(38 92% 60% / 0.10) 0px, transparent 50%);
+      radial-gradient(at 15% 10%, hsl(217 91% 55% / 0.45) 0px, transparent 55%),
+      radial-gradient(at 85% 15%, hsl(280 80% 55% / 0.32) 0px, transparent 55%),
+      radial-gradient(at 80% 90%, hsl(158 64% 45% / 0.32) 0px, transparent 55%),
+      radial-gradient(at 10% 85%, hsl(217 91% 40% / 0.40) 0px, transparent 55%),
+      linear-gradient(180deg, hsl(222 47% 6%) 0%, hsl(222 47% 10%) 100%);
     background-attachment: fixed;
     background-repeat: no-repeat;
     background-size: cover;
@@ -130,11 +131,11 @@ All colors MUST be HSL.
     pointer-events: none;
     z-index: 0;
     background-image:
-      linear-gradient(hsl(217 91% 35% / 0.05) 1px, transparent 1px),
-      linear-gradient(90deg, hsl(217 91% 35% / 0.05) 1px, transparent 1px);
+      linear-gradient(hsl(217 91% 70% / 0.06) 1px, transparent 1px),
+      linear-gradient(90deg, hsl(217 91% 70% / 0.06) 1px, transparent 1px);
     background-size: 44px 44px;
-    mask-image: radial-gradient(ellipse at center, black 40%, transparent 85%);
-    -webkit-mask-image: radial-gradient(ellipse at center, black 40%, transparent 85%);
+    mask-image: radial-gradient(ellipse at center, black 30%, transparent 80%);
+    -webkit-mask-image: radial-gradient(ellipse at center, black 30%, transparent 80%);
   }
 
   #root, main, aside {
