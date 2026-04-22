@@ -1,9 +1,20 @@
 import { createContext, useContext, useEffect, useState, ReactNode } from "react";
-import { mockTransactions, Transaction, TransactionItem } from "@/lib/mockData";
+import { mockTransactions, Transaction, TransactionItem, PaymentMethod } from "@/lib/mockData";
+
+type AddOrderInput = {
+  items: TransactionItem[];
+  total: number;
+  cashier: string;
+  paymentMethod?: PaymentMethod;
+  tendered?: number;
+  change?: number;
+  subtotal?: number;
+  vat?: number;
+};
 
 type OrdersContextType = {
   orders: Transaction[];
-  addOrder: (items: TransactionItem[], total: number, cashier: string) => Transaction;
+  addOrder: (input: AddOrderInput) => Transaction;
 };
 
 const OrdersContext = createContext<OrdersContextType | null>(null);
@@ -24,14 +35,12 @@ export const OrdersProvider = ({ children }: { children: ReactNode }) => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(orders));
   }, [orders]);
 
-  const addOrder = (items: TransactionItem[], total: number, cashier: string) => {
+  const addOrder = (input: AddOrderInput) => {
     const id = 1000 + Math.floor(Math.random() * 9000);
     const order: Transaction = {
       id,
       date: new Date().toISOString(),
-      cashier,
-      items,
-      total,
+      ...input,
     };
     setOrders((prev) => [order, ...prev]);
     return order;

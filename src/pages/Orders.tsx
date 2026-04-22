@@ -10,11 +10,13 @@ import {
   Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
 } from "@/components/ui/table";
 import { useOrders } from "@/context/OrdersContext";
-import { Search, Eye, Receipt } from "lucide-react";
+import { Search, Eye, Receipt as ReceiptIcon, Printer } from "lucide-react";
+import { Receipt } from "@/components/Receipt";
 
 const Orders = () => {
   const [search, setSearch] = useState("");
   const [selectedId, setSelectedId] = useState<number | null>(null);
+  const [receiptId, setReceiptId] = useState<number | null>(null);
   const { orders: rawOrders } = useOrders();
 
   const orders = useMemo(
@@ -99,6 +101,9 @@ const Orders = () => {
                   <Button variant="ghost" size="sm" onClick={() => setSelectedId(o.id)}>
                     <Eye className="h-4 w-4 mr-1" /> View
                   </Button>
+                  <Button variant="ghost" size="sm" onClick={() => setReceiptId(o.id)}>
+                    <Printer className="h-4 w-4 mr-1" /> Receipt
+                  </Button>
                 </TableCell>
               </TableRow>
             ))}
@@ -117,7 +122,7 @@ const Orders = () => {
         <DialogContent>
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
-              <Receipt className="h-5 w-5" />
+              <ReceiptIcon className="h-5 w-5" />
               Order #{selected?.id}
             </DialogTitle>
           </DialogHeader>
@@ -145,6 +150,11 @@ const Orders = () => {
           )}
         </DialogContent>
       </Dialog>
+      <Receipt
+        order={orders.find((o) => o.id === receiptId) || null}
+        open={!!receiptId}
+        onClose={() => setReceiptId(null)}
+      />
     </div>
   );
 };

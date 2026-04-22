@@ -24,12 +24,19 @@ export type TransactionItem = {
   quantity: number;
 };
 
+export type PaymentMethod = "Cash" | "GCash" | "Card";
+
 export type Transaction = {
   id: number;
   date: string;
   cashier: string;
   items: TransactionItem[];
   total: number;
+  paymentMethod?: PaymentMethod;
+  tendered?: number;
+  change?: number;
+  subtotal?: number;
+  vat?: number;
 };
 
 export const mockUsers: User[] = [
