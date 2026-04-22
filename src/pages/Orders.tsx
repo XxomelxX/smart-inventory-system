@@ -10,11 +10,13 @@ import {
   Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
 } from "@/components/ui/table";
 import { useOrders } from "@/context/OrdersContext";
-import { Search, Eye, Receipt } from "lucide-react";
+import { Search, Eye, Receipt as ReceiptIcon, Printer } from "lucide-react";
+import { Receipt } from "@/components/Receipt";
 
 const Orders = () => {
   const [search, setSearch] = useState("");
   const [selectedId, setSelectedId] = useState<number | null>(null);
+  const [receiptId, setReceiptId] = useState<number | null>(null);
   const { orders: rawOrders } = useOrders();
 
   const orders = useMemo(
