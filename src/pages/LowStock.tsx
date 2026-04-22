@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -6,21 +6,22 @@ import { Input } from "@/components/ui/input";
 import {
   Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
 } from "@/components/ui/table";
-import { mockProducts } from "@/lib/mockData";
 import { AlertTriangle, Package, ArrowUpRight, Search, Download } from "lucide-react";
-import { useState } from "react";
 import { toast } from "sonner";
 import { useAuth } from "@/context/AuthContext";
+import { useProducts } from "@/context/ProductsContext";
 
 const LowStock = () => {
   const [search, setSearch] = useState("");
   const { user } = useAuth();
+  const { products } = useProducts();
   const isAdmin = user?.role === "ADMIN";
   const threshold = 20;
 
-  const lowStockItems = useMemo(() => {
-    return mockProducts.filter((p) => p.stock < threshold);
-  }, []);
+  const lowStockItems = useMemo(
+    () => products.filter((p) => p.stock < threshold),
+    [products]
+  );
 
   const filtered = lowStockItems.filter(
     (p) =>
@@ -39,13 +40,10 @@ const LowStock = () => {
         [p.name, p.barcode, p.category, p.stock, p.stock < 10 ? "Critical" : "Low"].join(",")
       ),
     ].join("\n");
-
     const blob = new Blob([csv], { type: "text/csv" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
-    a.href = url;
-    a.download = "low-stock-report.csv";
-    a.click();
+    a.href = url; a.download = "low-stock-report.csv"; a.click();
     URL.revokeObjectURL(url);
     toast.success("Report downloaded");
   };
@@ -69,13 +67,11 @@ const LowStock = () => {
         </div>
         {isAdmin && (
           <Button variant="outline" onClick={exportList}>
-            <Download className="h-4 w-4 mr-2" />
-            Export List
+            <Download className="h-4 w-4 mr-2" /> Export List
           </Button>
         )}
       </header>
 
-      {/* Summary Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <Card className="p-5 border-l-4 border-l-destructive">
           <div className="flex items-center gap-3">
@@ -112,19 +108,13 @@ const LowStock = () => {
         </Card>
       </div>
 
-      {/* Search */}
       <Card className="p-4">
         <div className="relative mb-4">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <Input
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            placeholder="Search low stock items..."
-            className="pl-9"
-          />
+          <Input value={search} onChange={(e) => setSearch(e.target.value)}
+            placeholder="Search low stock items..." className="pl-9" />
         </div>
 
-        {/* Table */}
         <div className="overflow-x-auto">
           <Table>
             <TableHeader>
@@ -142,16 +132,12 @@ const LowStock = () => {
                 <TableRow key={p.id}>
                   <TableCell className="font-medium">
                     <div className="flex items-center gap-2">
-                      {p.stock < 10 && (
-                        <AlertTriangle className="h-4 w-4 text-destructive" />
-                      )}
+                      {p.stock < 10 && <AlertTriangle className="h-4 w-4 text-destructive" />}
                       {p.name}
                     </div>
                   </TableCell>
                   <TableCell className="font-mono text-xs">{p.barcode}</TableCell>
-                  <TableCell>
-                    <Badge variant="secondary">{p.category}</Badge>
-                  </TableCell>
+                  <TableCell><Badge variant="secondary">{p.category}</Badge></TableCell>
                   <TableCell className="text-right">₱{p.price.toFixed(2)}</TableCell>
                   <TableCell className="text-right">
                     <span className={p.stock < 10 ? "text-destructive font-bold" : "text-amber-600 font-semibold"}>
@@ -173,9 +159,7 @@ const LowStock = () => {
                         <Package className="h-12 w-12 mx-auto text-muted-foreground/50" />
                         <p>All products are well-stocked! 🎉</p>
                       </div>
-                    ) : (
-                      "No matching items found."
-                    )}
+                    ) : "No matching items found."}
                   </TableCell>
                 </TableRow>
               )}
