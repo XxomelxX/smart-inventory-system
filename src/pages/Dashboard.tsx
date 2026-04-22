@@ -1,30 +1,34 @@
 import { useMemo } from "react";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { mockProducts, mockTransactions } from "@/lib/mockData";
 import { Package, DollarSign, ShoppingCart, AlertTriangle } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
+import { useProducts } from "@/context/ProductsContext";
+import { useOrders } from "@/context/OrdersContext";
 
 const Dashboard = () => {
   const { user } = useAuth();
+  const { products } = useProducts();
+  const { orders } = useOrders();
 
   const stats = useMemo(() => {
     const today = new Date().toDateString();
-    const todaysSales = mockTransactions.filter(
+    const valid = orders.filter((t) => !t.voided);
+    const todaysSales = valid.filter(
       (t) => new Date(t.date).toDateString() === today
     );
     const revenue = todaysSales.reduce((sum, t) => sum + t.total, 0);
-    const lowStock = mockProducts.filter((p) => p.stock < 20);
+    const lowStock = products.filter((p) => p.stock < 20);
     return {
-      totalProducts: mockProducts.length,
+      totalProducts: products.length,
       revenue,
       transactions: todaysSales.length,
       lowStock: lowStock.length,
       lowStockItems: lowStock,
     };
-  }, []);
+  }, [products, orders]);
 
-  const recent = mockTransactions.slice(0, 5);
+  const recent = orders.filter((o) => !o.voided).slice(0, 5);
 
   const cards = [
     { label: "Today's Revenue", value: `₱${stats.revenue.toFixed(2)}`, icon: DollarSign, tint: "bg-[image:var(--gradient-accent)]" },
