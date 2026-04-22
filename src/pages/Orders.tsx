@@ -101,6 +101,9 @@ const Orders = () => {
                   <Button variant="ghost" size="sm" onClick={() => setSelectedId(o.id)}>
                     <Eye className="h-4 w-4 mr-1" /> View
                   </Button>
+                  <Button variant="ghost" size="sm" onClick={() => setReceiptId(o.id)}>
+                    <Printer className="h-4 w-4 mr-1" /> Receipt
+                  </Button>
                 </TableCell>
               </TableRow>
             ))}
