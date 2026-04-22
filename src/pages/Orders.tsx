@@ -150,6 +150,11 @@ const Orders = () => {
           )}
         </DialogContent>
       </Dialog>
+      <Receipt
+        order={orders.find((o) => o.id === receiptId) || null}
+        open={!!receiptId}
+        onClose={() => setReceiptId(null)}
+      />
     </div>
   );
 };
