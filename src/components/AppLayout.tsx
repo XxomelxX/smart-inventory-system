@@ -1,5 +1,5 @@
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
-import { LayoutDashboard, Package, ScanBarcode, BarChart3, LogOut, Boxes, Users as UsersIcon, LayoutGrid, ReceiptText, Settings as SettingsIcon, AlertTriangle } from "lucide-react";
+import { LayoutDashboard, Package, ScanBarcode, BarChart3, LogOut, Boxes, Users as UsersIcon, LayoutGrid, ReceiptText, Settings as SettingsIcon, AlertTriangle, ClipboardList, ShieldCheck } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -11,7 +11,9 @@ const navItems = [
   { to: "/categories", label: "Categories", icon: LayoutGrid, roles: ["ADMIN"] },
   { to: "/low-stock", label: "Low Stock", icon: AlertTriangle, roles: ["ADMIN", "CASHIER"] },
   { to: "/orders", label: "Orders", icon: ReceiptText, roles: ["ADMIN", "CASHIER"] },
+  { to: "/z-reading", label: "Z-Reading", icon: ClipboardList, roles: ["ADMIN", "CASHIER"] },
   { to: "/reports", label: "Reports", icon: BarChart3, roles: ["ADMIN"] },
+  { to: "/audit", label: "Audit Log", icon: ShieldCheck, roles: ["ADMIN"] },
   { to: "/users", label: "Users", icon: UsersIcon, roles: ["ADMIN"] },
   { to: "/settings", label: "Settings", icon: SettingsIcon, roles: ["ADMIN", "CASHIER"] },
 ];
@@ -37,7 +39,7 @@ export const AppLayout = () => {
             <p className="text-xs text-muted-foreground mt-1">Small Business POS</p>
           </div>
         </div>
-        <nav className="flex-1 px-3 py-4 space-y-1">
+        <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
           {navItems
             .filter((i) => i.roles.includes(user?.role || ""))
             .map((item) => (
@@ -61,19 +63,15 @@ export const AppLayout = () => {
           <div className="flex items-center justify-between mb-3">
             <div className="min-w-0">
               <p className="text-sm font-medium truncate">{user?.name}</p>
-              <Badge variant="secondary" className="mt-1 text-[10px]">
-                {user?.role}
-              </Badge>
+              <Badge variant="secondary" className="mt-1 text-[10px]">{user?.role}</Badge>
             </div>
           </div>
           <Button variant="outline" size="sm" className="w-full" onClick={handleLogout}>
-            <LogOut className="h-4 w-4 mr-2" />
-            Logout
+            <LogOut className="h-4 w-4 mr-2" /> Logout
           </Button>
         </div>
       </aside>
 
-      {/* Mobile top bar */}
       <div className="md:hidden fixed top-0 left-0 right-0 z-10 flex items-center justify-between border-b bg-card px-4 py-3">
         <div className="flex items-center gap-2">
           <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[image:var(--gradient-primary)] text-primary-foreground">
@@ -90,8 +88,7 @@ export const AppLayout = () => {
         <Outlet />
       </main>
 
-      {/* Mobile bottom nav */}
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-10 border-t bg-card flex">
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-10 border-t bg-card flex overflow-x-auto">
         {navItems
           .filter((i) => i.roles.includes(user?.role || ""))
           .map((item) => (
@@ -99,7 +96,7 @@ export const AppLayout = () => {
               key={item.to}
               to={item.to}
               className={({ isActive }) =>
-                `flex-1 flex flex-col items-center gap-1 py-2 text-[11px] ${
+                `flex-shrink-0 min-w-[64px] flex flex-col items-center gap-1 py-2 px-2 text-[11px] ${
                   isActive ? "text-primary" : "text-muted-foreground"
                 }`
               }
