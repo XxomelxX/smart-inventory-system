@@ -104,6 +104,12 @@ All colors MUST be HSL.
   body {
     @apply bg-background text-foreground;
     background-color: hsl(var(--background));
+    background-image:
+      radial-gradient(at 100% 0%, hsl(25 50% 90% / 0.6) 0px, transparent 50%),
+      radial-gradient(at 0% 100%, hsl(35 60% 90% / 0.5) 0px, transparent 50%);
+    background-attachment: fixed;
     min-height: 100vh;
+    font-feature-settings: "ss01", "cv11";
+    letter-spacing: -0.01em;
   }
 }
