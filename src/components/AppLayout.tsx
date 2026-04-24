@@ -29,7 +29,7 @@ export const AppLayout = () => {
 
   return (
     <div className="flex min-h-screen bg-background">
-      <aside className="hidden md:flex w-64 flex-col border-r bg-card">
+      <aside className="hidden md:flex w-64 flex-col border-r bg-sidebar text-sidebar-foreground">
         <div className="flex items-center gap-2 px-6 py-5 border-b">
           <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-[image:var(--gradient-primary)] text-primary-foreground">
             <Boxes className="h-5 w-5" />
