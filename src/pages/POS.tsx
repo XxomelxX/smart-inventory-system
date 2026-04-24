@@ -4,13 +4,14 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { TransactionItem, Transaction, PaymentMethod, Product, DiscountType } from "@/lib/mockData";
-import { ScanBarcode, Trash2, Plus, Minus, Receipt as ReceiptIcon, Banknote, Smartphone, CreditCard, User as UserIcon, Percent } from "lucide-react";
+import { ScanBarcode, Trash2, Plus, Minus, Receipt as ReceiptIcon, Banknote, Smartphone, CreditCard, User as UserIcon, Percent, Camera } from "lucide-react";
 import { toast } from "sonner";
 import { useAuth } from "@/context/AuthContext";
 import { useOrders } from "@/context/OrdersContext";
 import { useProducts } from "@/context/ProductsContext";
 import { useAudit } from "@/context/AuditContext";
 import { Receipt } from "@/components/Receipt";
+import { BarcodeScanner } from "@/components/BarcodeScanner";
 
 const VAT_RATE = 0.12;
 
@@ -28,6 +29,7 @@ const POS = () => {
   const [customer, setCustomer] = useState<string>("");
   const [lastOrder, setLastOrder] = useState<Transaction | null>(null);
   const [receiptOpen, setReceiptOpen] = useState(false);
+  const [scannerOpen, setScannerOpen] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => { inputRef.current?.focus(); }, [cart]);
@@ -48,10 +50,14 @@ const POS = () => {
     toast.success(`Added: ${p.name}`);
   };
 
-  const addByBarcode = (code: string) => {
+  const addByBarcode = (code: string): boolean => {
     const product = getByBarcode(code);
-    if (!product) return toast.error(`No product found for barcode ${code}`);
+    if (!product) {
+      toast.error(`No product found for barcode ${code}`);
+      return false;
+    }
     addToCart(product);
+    return true;
   };
 
   const updateQty = (productId: number, delta: number) => {
@@ -160,8 +166,11 @@ const POS = () => {
               <Input ref={inputRef} value={barcode} onChange={(e) => setBarcode(e.target.value)}
                 placeholder="Scan barcode or type and press Enter…" className="text-base font-mono h-11" autoFocus />
               <Button type="submit" size="lg">Add</Button>
+              <Button type="button" size="lg" variant="outline" onClick={() => setScannerOpen(true)} title="Scan with camera">
+                <Camera className="h-4 w-4" /> Scan
+              </Button>
             </form>
-            <p className="text-xs text-muted-foreground mt-2">💡 Try: <code className="text-accent">4801234567890</code></p>
+            <p className="text-xs text-muted-foreground mt-2">💡 Try: <code className="text-accent">4801234567890</code> or tap <span className="text-accent font-medium">Scan</span> to use your camera.</p>
           </Card>
 
           <Card className="p-4">
@@ -311,6 +320,11 @@ const POS = () => {
       </div>
 
       <Receipt order={lastOrder} open={receiptOpen} onClose={() => setReceiptOpen(false)} />
+      <BarcodeScanner
+        open={scannerOpen}
+        onClose={() => setScannerOpen(false)}
+        onDetected={(code) => addByBarcode(code)}
+      />
     </div>
   );
 };
