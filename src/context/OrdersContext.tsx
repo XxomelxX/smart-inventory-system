@@ -6,6 +6,7 @@ type AddOrderInput = {
   total: number;
   cashier: string;
   paymentMethod?: PaymentMethod;
+  paymentRef?: string;
   tendered?: number;
   change?: number;
   subtotal?: number;

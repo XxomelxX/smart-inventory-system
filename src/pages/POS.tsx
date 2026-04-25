@@ -4,12 +4,13 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { TransactionItem, Transaction, PaymentMethod, Product, DiscountType } from "@/lib/mockData";
-import { ScanBarcode, Trash2, Plus, Minus, Receipt as ReceiptIcon, Banknote, Smartphone, CreditCard, User as UserIcon, Percent, Camera } from "lucide-react";
+import { ScanBarcode, Trash2, Plus, Minus, Receipt as ReceiptIcon, Banknote, Smartphone, CreditCard, User as UserIcon, Percent, Camera, Wallet, Building2 } from "lucide-react";
 import { toast } from "sonner";
 import { useAuth } from "@/context/AuthContext";
 import { useOrders } from "@/context/OrdersContext";
 import { useProducts } from "@/context/ProductsContext";
 import { useAudit } from "@/context/AuditContext";
+import { useCredit } from "@/context/CreditContext";
 import { Receipt } from "@/components/Receipt";
 import { BarcodeScanner } from "@/components/BarcodeScanner";
 
@@ -20,10 +21,12 @@ const POS = () => {
   const { addOrder } = useOrders();
   const { products, getByBarcode, deductStockForSale } = useProducts();
   const { record } = useAudit();
+  const { addCharge } = useCredit();
   const [barcode, setBarcode] = useState("");
   const [cart, setCart] = useState<TransactionItem[]>([]);
   const [payment, setPayment] = useState<PaymentMethod>("Cash");
   const [tendered, setTendered] = useState<string>("");
+  const [paymentRef, setPaymentRef] = useState<string>("");
   const [discountType, setDiscountType] = useState<DiscountType>("None");
   const [customDiscount, setCustomDiscount] = useState<string>("");
   const [customer, setCustomer] = useState<string>("");
@@ -98,15 +101,21 @@ const POS = () => {
   const tenderedNum = parseFloat(tendered) || 0;
   const change = payment === "Cash" ? Math.max(0, tenderedNum - total) : 0;
   const cashShort = payment === "Cash" && tenderedNum < total;
+  const refRequired = payment === "GCash" || payment === "PayMongo" || payment === "Xende";
+  const refMissing = refRequired && !paymentRef.trim();
+  const utangNeedsCustomer = payment === "Utang" && !customer.trim();
 
   const checkout = () => {
     if (cart.length === 0) return;
     if (cashShort) return toast.error("Cash tendered is less than total");
+    if (refMissing) return toast.error(`Enter ${payment} reference number`);
+    if (utangNeedsCustomer) return toast.error("Enter customer name for Utang");
     const order = addOrder({
       items: cart,
       total,
       cashier: user?.name || "Unknown",
       paymentMethod: payment,
+      paymentRef: refRequired ? paymentRef.trim() : undefined,
       tendered: payment === "Cash" ? tenderedNum : undefined,
       change: payment === "Cash" ? change : undefined,
       subtotal, vat,
@@ -115,15 +124,24 @@ const POS = () => {
       customer: customer.trim() || undefined,
     });
     deductStockForSale(cart);
+    if (payment === "Utang" && customer.trim()) {
+      addCharge({
+        customer: customer.trim(),
+        amount: total,
+        orderId: order.id,
+        cashier: user?.name,
+        note: `Sale #${order.id}`,
+      });
+    }
     record({
       user: user?.name || "Unknown",
       role: user?.role || "",
       action: "SALE",
-      details: `#${order.id} • ₱${order.total.toFixed(2)} • ${payment}${discountType !== "None" ? ` • ${discountType} discount` : ""}`,
+      details: `#${order.id} • ₱${order.total.toFixed(2)} • ${payment}${discountType !== "None" ? ` • ${discountType} discount` : ""}${refRequired ? ` • ref ${paymentRef.trim()}` : ""}${payment === "Utang" ? ` • UTANG ${customer}` : ""}`,
     });
     setLastOrder(order);
     setReceiptOpen(true);
-    setCart([]); setTendered(""); setDiscountType("None"); setCustomDiscount(""); setCustomer("");
+    setCart([]); setTendered(""); setPaymentRef(""); setDiscountType("None"); setCustomDiscount(""); setCustomer("");
     toast.success(`Sale #${order.id} completed — ₱${order.total.toFixed(2)}`);
   };
 
@@ -276,12 +294,29 @@ const POS = () => {
 
             <div>
               <label className="text-xs text-muted-foreground mb-1 block">Payment Method</label>
-              <div className="flex gap-2">
+              <div className="grid grid-cols-3 gap-2">
                 <PaymentBtn method="Cash" icon={Banknote} />
                 <PaymentBtn method="GCash" icon={Smartphone} />
+                <PaymentBtn method="PayMongo" icon={CreditCard} />
+                <PaymentBtn method="Xende" icon={Building2} />
                 <PaymentBtn method="Card" icon={CreditCard} />
+                <PaymentBtn method="Utang" icon={Wallet} />
               </div>
             </div>
+
+            {refRequired && (
+              <div>
+                <label className="text-xs text-muted-foreground mb-1 block">{payment} Reference No.</label>
+                <Input value={paymentRef} onChange={(e) => setPaymentRef(e.target.value)}
+                  placeholder={`Enter ${payment} ref / txn id`} className="font-mono" />
+              </div>
+            )}
+
+            {payment === "Utang" && (
+              <div className="rounded-md border border-destructive/40 bg-destructive/5 p-2.5 text-xs">
+                ⚠️ This sale will be charged to <b>{customer || "(enter customer above)"}</b>'s utang balance.
+              </div>
+            )}
 
             {payment === "Cash" && (
               <div>
