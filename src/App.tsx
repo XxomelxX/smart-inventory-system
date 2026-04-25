@@ -7,6 +7,7 @@ import { AuthProvider } from "@/context/AuthContext";
 import { OrdersProvider } from "@/context/OrdersContext";
 import { ProductsProvider } from "@/context/ProductsContext";
 import { AuditProvider } from "@/context/AuditContext";
+import { CreditProvider } from "@/context/CreditContext";
 import { AppLayout } from "@/components/AppLayout";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
 import Login from "./pages/Login";
@@ -21,6 +22,7 @@ import Settings from "./pages/Settings";
 import LowStock from "./pages/LowStock";
 import ZReading from "./pages/ZReading";
 import AuditLog from "./pages/AuditLog";
+import Credit from "./pages/Credit";
 import NotFound from "./pages/NotFound.tsx";
 
 const queryClient = new QueryClient();
@@ -35,6 +37,7 @@ const App = () => (
           <AuditProvider>
             <ProductsProvider>
               <OrdersProvider>
+                <CreditProvider>
                 <Routes>
                   <Route path="/" element={<Navigate to="/dashboard" replace />} />
                   <Route path="/login" element={<Login />} />
@@ -48,6 +51,7 @@ const App = () => (
                     <Route path="/dashboard" element={<Dashboard />} />
                     <Route path="/pos" element={<POS />} />
                     <Route path="/orders" element={<Orders />} />
+                    <Route path="/credit" element={<Credit />} />
                     <Route path="/z-reading" element={<ZReading />} />
                     <Route path="/settings" element={<Settings />} />
                     <Route
@@ -74,6 +78,7 @@ const App = () => (
                   </Route>
                   <Route path="*" element={<NotFound />} />
                 </Routes>
+                </CreditProvider>
               </OrdersProvider>
             </ProductsProvider>
           </AuditProvider>

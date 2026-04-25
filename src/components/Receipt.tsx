@@ -98,6 +98,16 @@ export const Receipt = ({
             <div className="row flex justify-between">
               <span>Payment</span><span>{order.paymentMethod || "Cash"}</span>
             </div>
+            {order.paymentRef && (
+              <div className="row flex justify-between">
+                <span>Ref #</span><span className="font-mono">{order.paymentRef}</span>
+              </div>
+            )}
+            {order.customer && (
+              <div className="row flex justify-between">
+                <span>Customer</span><span>{order.customer}</span>
+              </div>
+            )}
             {order.tendered !== undefined && (
               <>
                 <div className="row flex justify-between">
@@ -107,6 +117,11 @@ export const Receipt = ({
                   <span>Change</span><span>₱{(order.change ?? 0).toFixed(2)}</span>
                 </div>
               </>
+            )}
+            {order.paymentMethod === "Utang" && (
+              <div className="center text-center bold font-bold mt-1" style={{color:'#b91c1c'}}>
+                *** ON ACCOUNT (UTANG) ***
+              </div>
             )}
             <div className="dashed border-t border-dashed border-black my-2" />
             <div className="center text-center small text-[10px]">

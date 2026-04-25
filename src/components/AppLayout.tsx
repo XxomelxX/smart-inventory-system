@@ -1,5 +1,5 @@
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
-import { LayoutDashboard, Package, ScanBarcode, BarChart3, LogOut, Boxes, Users as UsersIcon, LayoutGrid, ReceiptText, Settings as SettingsIcon, AlertTriangle, ClipboardList, ShieldCheck } from "lucide-react";
+import { LayoutDashboard, Package, ScanBarcode, BarChart3, LogOut, Boxes, Users as UsersIcon, LayoutGrid, ReceiptText, Settings as SettingsIcon, AlertTriangle, ClipboardList, ShieldCheck, Wallet } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -11,6 +11,7 @@ const navItems = [
   { to: "/categories", label: "Categories", icon: LayoutGrid, roles: ["ADMIN"] },
   { to: "/low-stock", label: "Low Stock", icon: AlertTriangle, roles: ["ADMIN", "CASHIER"] },
   { to: "/orders", label: "Orders", icon: ReceiptText, roles: ["ADMIN", "CASHIER"] },
+  { to: "/credit", label: "Utang / Credit", icon: Wallet, roles: ["ADMIN", "CASHIER"] },
   { to: "/z-reading", label: "Z-Reading", icon: ClipboardList, roles: ["ADMIN", "CASHIER"] },
   { to: "/reports", label: "Reports", icon: BarChart3, roles: ["ADMIN"] },
   { to: "/audit", label: "Audit Log", icon: ShieldCheck, roles: ["ADMIN"] },
@@ -35,8 +36,8 @@ export const AppLayout = () => {
             <Boxes className="h-5 w-5" />
           </div>
           <div>
-            <h1 className="text-sm font-semibold leading-none">InventoryPro</h1>
-            <p className="text-xs text-muted-foreground mt-1">Small Business POS</p>
+            <h1 className="text-sm font-semibold leading-none">Sari-Sari POS</h1>
+            <p className="text-xs text-muted-foreground mt-1">Inventory & Sales</p>
           </div>
         </div>
         <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
@@ -77,7 +78,7 @@ export const AppLayout = () => {
           <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[image:var(--gradient-primary)] text-primary-foreground">
             <Boxes className="h-4 w-4" />
           </div>
-          <span className="font-semibold text-sm">InventoryPro</span>
+          <span className="font-semibold text-sm">Sari-Sari POS</span>
         </div>
         <Button variant="ghost" size="sm" onClick={handleLogout}>
           <LogOut className="h-4 w-4" />

@@ -40,13 +40,13 @@ const Login = () => {
             <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-white/15 backdrop-blur">
               <Boxes className="h-6 w-6" />
             </div>
-            <h1 className="text-3xl font-bold">InventoryPro</h1>
+            <h1 className="text-3xl font-bold">Sari-Sari POS</h1>
           </div>
           <h2 className="text-4xl font-bold leading-tight mb-4">
-            Small Inventory System for Small Businesses
+            Web-Based POS, Inventory & Sales System for Sari-Sari Stores
           </h2>
           <p className="text-primary-foreground/80 mb-8">
-            Web-based inventory and POS with USB barcode scanner integration. Track stock, process sales, and view reports — all in one place.
+            Track stock, record sales, manage utang (credit), accept GCash & PayMongo, and print receipts — all from one dashboard.
           </p>
           <div className="flex items-center gap-2 text-sm text-primary-foreground/90">
             <ScanBarcode className="h-4 w-4" />
@@ -59,7 +59,7 @@ const Login = () => {
             <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-[image:var(--gradient-primary)] text-primary-foreground">
               <Boxes className="h-5 w-5" />
             </div>
-            <h1 className="text-xl font-bold">InventoryPro</h1>
+            <h1 className="text-xl font-bold">Sari-Sari POS</h1>
           </div>
 
           <h2 className="text-2xl font-bold mb-1">Sign in</h2>
