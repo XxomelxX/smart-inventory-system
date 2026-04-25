@@ -24,7 +24,7 @@ export type TransactionItem = {
   quantity: number;
 };
 
-export type PaymentMethod = "Cash" | "GCash" | "Card";
+export type PaymentMethod = "Cash" | "GCash" | "PayMongo" | "Xende" | "Card" | "Utang";
 export type DiscountType = "None" | "Senior" | "PWD" | "Custom";
 
 export type Transaction = {
@@ -34,6 +34,7 @@ export type Transaction = {
   items: TransactionItem[];
   total: number;
   paymentMethod?: PaymentMethod;
+  paymentRef?: string; // GCash/PayMongo/Xendit reference number
   tendered?: number;
   change?: number;
   subtotal?: number;
