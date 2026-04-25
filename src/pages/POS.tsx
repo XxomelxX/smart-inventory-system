@@ -341,7 +341,7 @@ const POS = () => {
               </div>
             )}
 
-            <Button className="w-full" size="lg" disabled={cart.length === 0 || cashShort} onClick={checkout}>
+            <Button className="w-full" size="lg" disabled={cart.length === 0 || cashShort || refMissing || utangNeedsCustomer} onClick={checkout}>
               Checkout & Print Receipt
             </Button>
 
