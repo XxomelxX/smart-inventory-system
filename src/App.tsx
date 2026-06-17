@@ -20,8 +20,6 @@ import Categories from "./pages/Categories";
 import Orders from "./pages/Orders";
 import Settings from "./pages/Settings";
 import LowStock from "./pages/LowStock";
-import ZReading from "./pages/ZReading";
-import AuditLog from "./pages/AuditLog";
 import Credit from "./pages/Credit";
 import NotFound from "./pages/NotFound.tsx";
 
@@ -52,7 +50,7 @@ const App = () => (
                     <Route path="/pos" element={<POS />} />
                     <Route path="/orders" element={<Orders />} />
                     <Route path="/credit" element={<Credit />} />
-                    <Route path="/z-reading" element={<ZReading />} />
+                    
                     <Route path="/settings" element={<Settings />} />
                     <Route
                       path="/products"
@@ -66,10 +64,6 @@ const App = () => (
                     <Route
                       path="/reports"
                       element={<ProtectedRoute roles={["ADMIN"]}><Reports /></ProtectedRoute>}
-                    />
-                    <Route
-                      path="/audit"
-                      element={<ProtectedRoute roles={["ADMIN"]}><AuditLog /></ProtectedRoute>}
                     />
                     <Route
                       path="/users"

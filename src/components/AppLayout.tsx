@@ -1,5 +1,5 @@
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
-import { LayoutDashboard, Package, ScanBarcode, BarChart3, LogOut, Boxes, Users as UsersIcon, LayoutGrid, ReceiptText, Settings as SettingsIcon, AlertTriangle, ClipboardList, ShieldCheck, Wallet } from "lucide-react";
+import { LayoutDashboard, Package, ScanBarcode, BarChart3, LogOut, Boxes, Users as UsersIcon, LayoutGrid, ReceiptText, Settings as SettingsIcon, AlertTriangle, Wallet } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -12,9 +12,7 @@ const navItems = [
   { to: "/low-stock", label: "Low Stock", icon: AlertTriangle, roles: ["ADMIN", "CASHIER"] },
   { to: "/orders", label: "Orders", icon: ReceiptText, roles: ["ADMIN", "CASHIER"] },
   { to: "/credit", label: "Utang / Credit", icon: Wallet, roles: ["ADMIN", "CASHIER"] },
-  { to: "/z-reading", label: "Z-Reading", icon: ClipboardList, roles: ["ADMIN", "CASHIER"] },
   { to: "/reports", label: "Reports", icon: BarChart3, roles: ["ADMIN"] },
-  { to: "/audit", label: "Audit Log", icon: ShieldCheck, roles: ["ADMIN"] },
   { to: "/users", label: "Users", icon: UsersIcon, roles: ["ADMIN"] },
   { to: "/settings", label: "Settings", icon: SettingsIcon, roles: ["ADMIN", "CASHIER"] },
 ];
