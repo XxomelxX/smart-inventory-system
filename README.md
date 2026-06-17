@@ -1,3 +1,3 @@
-# Welcome to your Lovable project
+# Sari-Sari POS
 
 TODO: Document your project here
