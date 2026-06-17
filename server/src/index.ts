@@ -3,6 +3,8 @@ import fastifyCors from '@fastify/cors';
 import productsRoutes from './routes/products';
 import ordersRoutes from './routes/orders';
 import authRoutes from './routes/auth';
+import usersRoutes from './routes/users';
+import auditRoutes from './routes/audit';
 import prisma from './db';
 
 const server = Fastify({ logger: true });
@@ -23,8 +25,10 @@ server.decorate('authenticate', async (request: any, reply: any) => {
 });
 
 server.register(authRoutes, { prefix: '/api' });
+server.register(usersRoutes, { prefix: '/api' });
 server.register(productsRoutes, { prefix: '/api' });
 server.register(ordersRoutes, { prefix: '/api' });
+server.register(auditRoutes, { prefix: '/api' });
 
 const start = async () => {
   try {
